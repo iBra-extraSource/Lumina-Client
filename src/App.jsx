@@ -17,6 +17,9 @@ import AddPatient from "./pages/clinic/AddPatient";
 import PatientProfile from "./pages/clinic/PatientProfile";
 import ClinicPredictions from "./pages/clinic/ClinicPredictions";
 import NewPrediction from "./pages/clinic/NewPrediction";
+import ClinicProfile from "./pages/clinic/ClinicProfile";
+
+
 
 
 function App() {
@@ -93,7 +96,10 @@ function App() {
       path="/clinic/predictions/new"
       element={<NewPrediction />}
     />
-
+      <Route
+        path="/clinic/profile"
+        element={<ClinicProfile />}
+      />
 
     
       </Routes>
