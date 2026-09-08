@@ -11,6 +11,8 @@ import TryAI from "./pages/user/TryAI";
 import PredictionHistory from "./pages/user/PredictionHistory";
 import ClinicSignup from "./pages/clinic/ClinicSignup";
 import ClinicLogin from "./pages/clinic/ClinicLogin";
+import ClinicDashboard from "./pages/clinic/ClinicDashboard";
+
 
 
 
@@ -61,6 +63,10 @@ function App() {
     path="/clinic/login" element={<ClinicLogin />} 
     />
 
+    <Route
+  path="/clinic/dashboard"
+  element={<ClinicDashboard />}
+    />
 
 
 
