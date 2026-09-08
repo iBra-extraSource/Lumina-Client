@@ -1,0 +1,278 @@
+@import "../../theme.css";
+
+.clinic-signup-page {
+  min-height: 100vh;
+
+  padding: 60px 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(182, 154, 200, 0.16),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(111, 75, 139, 0.08),
+      transparent 30%
+    ),
+    var(--background);
+
+  color: var(--text-primary);
+
+  font-family: var(--font-body);
+}
+
+.clinic-signup-card {
+  width: 100%;
+  max-width: 760px;
+
+  padding: 46px;
+
+  background: rgba(255, 255, 255, 0.95);
+
+  border: 1px solid var(--border);
+
+  border-radius: 28px;
+
+  box-shadow:
+    0 22px 60px rgba(49, 35, 60, 0.1);
+}
+
+.clinic-signup-logo {
+  display: inline-block;
+
+  margin-bottom: 42px;
+
+  color: var(--text-primary);
+
+  font-family: var(--font-display);
+  font-size: 22px;
+
+  text-decoration: none;
+
+  letter-spacing: -0.03em;
+}
+
+.clinic-signup-header {
+  margin-bottom: 34px;
+}
+
+.clinic-signup-label {
+  margin: 0 0 9px;
+
+  color: var(--primary);
+
+  font-size: 12px;
+  font-weight: 700;
+
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.clinic-signup-header h1 {
+  margin: 0 0 14px;
+
+  font-family: var(--font-display);
+
+  font-size: clamp(2.7rem, 5vw, 4rem);
+
+  font-weight: 400;
+
+  line-height: 1;
+
+  letter-spacing: -0.04em;
+}
+
+.clinic-signup-header p:last-child {
+  max-width: 600px;
+
+  margin: 0;
+
+  color: var(--text-secondary);
+
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* Form */
+
+.clinic-signup-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 20px;
+}
+
+.clinic-form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 18px;
+}
+
+.clinic-form-group {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.clinic-form-group label {
+  color: var(--text-primary);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.clinic-form-group input,
+.clinic-form-group select {
+  width: 100%;
+
+  min-height: 50px;
+
+  padding: 0 15px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 13px;
+
+  background: var(--surface);
+
+  color: var(--text-primary);
+
+  font-family: var(--font-body);
+  font-size: 14px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.clinic-form-group input:focus,
+.clinic-form-group select:focus {
+  border-color: var(--primary);
+
+  box-shadow:
+    0 0 0 4px rgba(111, 75, 139, 0.09);
+}
+
+.clinic-form-group input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Terms */
+
+.clinic-terms {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+}
+
+.clinic-terms input {
+  width: 17px;
+  height: 17px;
+
+  margin-top: 2px;
+
+  accent-color: var(--primary);
+}
+
+.clinic-terms p {
+  margin: 0;
+
+  color: var(--text-secondary);
+
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+/* Button */
+
+.clinic-signup-button {
+  width: 100%;
+
+  min-height: 52px;
+
+  margin-top: 4px;
+
+  border: none;
+  border-radius: 999px;
+
+  background: var(--primary);
+
+  color: var(--white);
+
+  font-family: var(--font-body);
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 28px rgba(111, 75, 139, 0.23);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.clinic-signup-button:hover {
+  background: var(--primary-hover);
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 14px 34px rgba(111, 75, 139, 0.3);
+}
+
+/* Login */
+
+.clinic-signup-login {
+  margin: 26px 0 0;
+
+  text-align: center;
+
+  color: var(--text-secondary);
+
+  font-size: 13px;
+}
+
+.clinic-signup-login a {
+  color: var(--primary);
+
+  font-weight: 600;
+
+  text-decoration: none;
+}
+
+.clinic-signup-login a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+
+@media (max-width: 700px) {
+  .clinic-signup-page {
+    padding: 30px 18px;
+  }
+
+  .clinic-signup-card {
+    padding: 30px 24px;
+
+    border-radius: 22px;
+  }
+
+  .clinic-form-row {
+    grid-template-columns: 1fr;
+  }
+}
