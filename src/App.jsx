@@ -6,7 +6,7 @@ import ChooseAccount from "./pages/public/ChooseAccount";
 import UserSignup from "./pages/user/UserSignup";
 import UserLogin from "./pages/user/UserLogin";
 import UserDashboard from "./pages/user/UserDashboard";
-
+import UserProfile from "./pages/user/UserProfile";
 
 function App() {
   return (
@@ -33,7 +33,13 @@ function App() {
           path="/user/dashboard"
           element={<UserDashboard />}
         />
+        
+      <Route
+        path="/user/profile"
+        element={<UserProfile />}
+        />
       </Routes>
+
 
       
     </BrowserRouter>
