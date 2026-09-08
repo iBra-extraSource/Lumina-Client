@@ -8,7 +8,7 @@ import UserLogin from "./pages/user/UserLogin";
 import UserDashboard from "./pages/user/UserDashboard";
 import UserProfile from "./pages/user/UserProfile";
 import TryAI from "./pages/user/TryAI";
-
+import PredictionHistory from "./pages/user/PredictionHistory";
 
 
 function App() {
@@ -45,6 +45,11 @@ function App() {
         <Route 
         path="/user/try-ai" element={<TryAI />} 
         />
+
+        <Route
+        path="/user/predictions"
+        element={<PredictionHistory />}
+      />
 
       </Routes>
 
