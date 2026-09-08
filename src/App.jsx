@@ -7,6 +7,9 @@ import UserSignup from "./pages/user/UserSignup";
 import UserLogin from "./pages/user/UserLogin";
 import UserDashboard from "./pages/user/UserDashboard";
 import UserProfile from "./pages/user/UserProfile";
+import TryAI from "./pages/user/TryAI";
+
+
 
 function App() {
   return (
@@ -33,11 +36,16 @@ function App() {
           path="/user/dashboard"
           element={<UserDashboard />}
         />
-        
+
       <Route
         path="/user/profile"
         element={<UserProfile />}
         />
+
+        <Route 
+        path="/user/try-ai" element={<TryAI />} 
+        />
+
       </Routes>
 
 
