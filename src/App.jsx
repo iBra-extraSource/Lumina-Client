@@ -12,9 +12,9 @@ import PredictionHistory from "./pages/user/PredictionHistory";
 import ClinicSignup from "./pages/clinic/ClinicSignup";
 import ClinicLogin from "./pages/clinic/ClinicLogin";
 import ClinicDashboard from "./pages/clinic/ClinicDashboard";
-
-
-
+import Patients from "./pages/clinic/Patients";
+import AddPatient from "./pages/clinic/AddPatient";
+import PatientProfile from "./pages/clinic/PatientProfile";
 
 function App() {
   return (
@@ -68,9 +68,21 @@ function App() {
   element={<ClinicDashboard />}
     />
 
+      <Route
+        path="/clinic/patients"
+        element={<Patients />}
+      />
+    <Route
+      path="/clinic/patients/add"
+      element={<AddPatient />}
+    />
 
+    <Route
+      path="/clinic/patients/:id"
+      element={<PatientProfile />}
+    />
 
-
+    
 
 
     
