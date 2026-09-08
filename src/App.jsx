@@ -5,6 +5,8 @@ import ChooseAccount from "./pages/public/ChooseAccount";
 
 import UserSignup from "./pages/user/UserSignup";
 import UserLogin from "./pages/user/UserLogin";
+import UserDashboard from "./pages/user/UserDashboard";
+
 
 function App() {
   return (
@@ -26,7 +28,14 @@ function App() {
           path="/user/login"
           element={<UserLogin />}
         />
+
+         <Route
+          path="/user/dashboard"
+          element={<UserDashboard />}
+        />
       </Routes>
+
+      
     </BrowserRouter>
   );
 }
