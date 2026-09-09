@@ -20,8 +20,14 @@ function ClinicLogin() {
           </p>
         </div>
 
-        <form className="clinic-login-form">
-          <div className="clinic-login-group">
+            <form
+            className="clinic-login-form"
+            onSubmit={(event) => {
+                event.preventDefault();
+                window.location.href = "/clinic/dashboard";
+            }}
+            >         
+             <div className="clinic-login-group">
             <label>Email</label>
 
             <input

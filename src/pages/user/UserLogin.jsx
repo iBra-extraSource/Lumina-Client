@@ -21,8 +21,13 @@ function UserLogin() {
           </p>
         </div>
 
-        <form className="user-login__form">
-
+        <form
+        className="user-login__form"
+        onSubmit={(event) => {
+            event.preventDefault();
+            window.location.href = "/user/dashboard";
+        }}
+        >
           <div className="form-group">
             <label>Email</label>
             <input

@@ -38,8 +38,7 @@ function NewPrediction() {
       return;
     }
 
-    alert("Ready to generate clinic AI prediction.");
-  }
+window.location.href = "/clinic/predictions";  }
 
   return (
     <div className="new-prediction-page">

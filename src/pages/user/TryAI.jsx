@@ -32,7 +32,7 @@ function TryAI() {
       return;
     }
 
-    alert("Ready to generate AI preview.");
+window.location.href = "/user/predictions";
   }
 
   return (
