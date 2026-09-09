@@ -51,8 +51,13 @@ function AddPatient() {
           </Link>
         </div>
 
-        <form className="add-patient-form">
-          <section className="patient-form-section">
+<form
+  className="add-patient-form"
+  onSubmit={(event) => {
+    event.preventDefault();
+    window.location.href = "/clinic/patients";
+  }}
+>          <section className="patient-form-section">
             <div className="patient-section-heading">
               <p className="add-patient-label">
                 Personal Information
