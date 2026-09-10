@@ -1,7 +1,67 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./ClinicDashboard.css";
 
 function ClinicDashboard() {
+  const [patients, setPatients] = useState([]);
+  const [predictions, setPredictions] = useState([]);
+
+  useEffect(() => {
+    getDashboardData();
+  }, []);
+
+  async function getDashboardData() {
+    try {
+      const clinicId = localStorage.getItem("clinicId");
+
+      if (!clinicId) {
+        return;
+      }
+
+      const patientsResponse = await fetch(
+        `http://localhost:5000/api/patients?clinic_id=${clinicId}`
+      );
+
+      const predictionsResponse = await fetch(
+        `http://localhost:5000/api/predictions?clinic_id=${clinicId}`
+      );
+
+      const patientsData = await patientsResponse.json();
+      const predictionsData = await predictionsResponse.json();
+
+      if (patientsResponse.ok) {
+        setPatients(patientsData);
+      }
+
+      if (predictionsResponse.ok) {
+        setPredictions(predictionsData);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const recentPatients = patients.slice(0, 2);
+
+  const consultationsThisMonth = predictions.filter((prediction) => {
+    const predictionDate = new Date(prediction.created_at);
+    const now = new Date();
+
+    return (
+      predictionDate.getMonth() === now.getMonth() &&
+      predictionDate.getFullYear() === now.getFullYear()
+    );
+  }).length;
+
+  function getInitials(name) {
+    return name
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+  }
+
   return (
     <div className="clinic-dashboard">
       <aside className="clinic-sidebar">
@@ -10,7 +70,10 @@ function ClinicDashboard() {
         </Link>
 
         <nav className="clinic-dashboard-nav">
-          <Link to="/clinic/dashboard" className="active-link">
+          <Link
+            to="/clinic/dashboard"
+            className="active-link"
+          >
             Dashboard
           </Link>
 
@@ -27,7 +90,10 @@ function ClinicDashboard() {
           </Link>
         </nav>
 
-        <Link to="/" className="clinic-dashboard-logout">
+        <Link
+          to="/"
+          className="clinic-dashboard-logout"
+        >
           Log Out
         </Link>
       </aside>
@@ -48,7 +114,7 @@ function ClinicDashboard() {
           </div>
 
           <Link
-            to="/clinic/patients"
+            to="/clinic/patients/add"
             className="clinic-dashboard-button"
           >
             Add Patient
@@ -58,17 +124,17 @@ function ClinicDashboard() {
         <section className="clinic-stats">
           <div className="clinic-stat-card">
             <p>Total Patients</p>
-            <h2>24</h2>
+            <h2>{patients.length}</h2>
           </div>
 
           <div className="clinic-stat-card">
             <p>Predictions Generated</p>
-            <h2>38</h2>
+            <h2>{predictions.length}</h2>
           </div>
 
           <div className="clinic-stat-card">
             <p>Consultations This Month</p>
-            <h2>12</h2>
+            <h2>{consultationsThisMonth}</h2>
           </div>
         </section>
 
@@ -88,39 +154,41 @@ function ClinicDashboard() {
           </div>
 
           <div className="clinic-patient-list">
-            <div className="clinic-patient-row">
-              <div className="clinic-patient-avatar">
-                SA
-              </div>
+            {recentPatients.length === 0 ? (
+              <p>No patients yet.</p>
+            ) : (
+              recentPatients.map((patient) => (
+                <div
+                  className="clinic-patient-row"
+                  key={patient.id}
+                >
+                  <div className="clinic-patient-avatar">
+                    {getInitials(patient.full_name)}
+                  </div>
 
-              <div className="clinic-patient-info">
-                <h3>Sample Patient</h3>
-                <p>Rhinoplasty consultation</p>
-              </div>
+                  <div className="clinic-patient-info">
+                    <h3>{patient.full_name}</h3>
 
-              <p className="clinic-patient-date">
-                Sep 8, 2026
-              </p>
+                    <p>
+                      {patient.procedure_interest ||
+                        "No procedure selected"}
+                    </p>
+                  </div>
 
-              <button>View</button>
-            </div>
+                  <p className="clinic-patient-date">
+                    {new Date(
+                      patient.created_at
+                    ).toLocaleDateString()}
+                  </p>
 
-            <div className="clinic-patient-row">
-              <div className="clinic-patient-avatar">
-                MA
-              </div>
-
-              <div className="clinic-patient-info">
-                <h3>Example Patient</h3>
-                <p>Jawline consultation</p>
-              </div>
-
-              <p className="clinic-patient-date">
-                Sep 6, 2026
-              </p>
-
-              <button>View</button>
-            </div>
+                  <Link
+                    to={`/clinic/patients/${patient.id}`}
+                  >
+                    View
+                  </Link>
+                </div>
+              ))
+            )}
           </div>
         </section>
 

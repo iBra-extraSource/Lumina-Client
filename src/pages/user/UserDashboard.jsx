@@ -1,10 +1,49 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./UserDashboard.css";
 
 function UserDashboard() {
+  const [predictions, setPredictions] = useState([]);
+
+  useEffect(() => {
+    getPredictions();
+  }, []);
+
+  async function getPredictions() {
+    try {
+      const userId = localStorage.getItem("userId");
+
+      if (!userId) {
+        return;
+      }
+
+      const response = await fetch(
+        `http://localhost:5000/api/predictions?user_id=${userId}`
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setPredictions(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const proceduresExplored = new Set(
+    predictions.map((prediction) => prediction.procedure)
+  ).size;
+
+  const latestPrediction =
+    predictions.length > 0
+      ? predictions[0].procedure
+      : "None";
+
+  const recentPredictions = predictions.slice(0, 2);
+
   return (
     <div className="user-dashboard">
-
       <aside className="dashboard-sidebar">
         <Link to="/" className="dashboard-logo">
           Lumina Aesthetics
@@ -34,17 +73,23 @@ function UserDashboard() {
       </aside>
 
       <main className="dashboard-main">
-
         <div className="dashboard-header">
           <div>
-            <p className="dashboard-label">User Dashboard</p>
+            <p className="dashboard-label">
+              User Dashboard
+            </p>
+
             <h1>Welcome back.</h1>
+
             <p>
               Explore cosmetic procedures and manage your saved predictions.
             </p>
           </div>
 
-          <Link to="/user/try-ai" className="dashboard-primary-button">
+          <Link
+            to="/user/try-ai"
+            className="dashboard-primary-button"
+          >
             Create Prediction
           </Link>
         </div>
@@ -52,24 +97,27 @@ function UserDashboard() {
         <section className="dashboard-stats">
           <div className="stat-card">
             <p>Saved Predictions</p>
-            <h2>3</h2>
+            <h2>{predictions.length}</h2>
           </div>
 
           <div className="stat-card">
             <p>Procedures Explored</p>
-            <h2>2</h2>
+            <h2>{proceduresExplored}</h2>
           </div>
 
           <div className="stat-card">
             <p>Latest Prediction</p>
-            <h2>Rhinoplasty</h2>
+            <h2>{latestPrediction}</h2>
           </div>
         </section>
 
         <section className="dashboard-section">
           <div className="section-heading">
             <div>
-              <p className="dashboard-label">Recent Activity</p>
+              <p className="dashboard-label">
+                Recent Activity
+              </p>
+
               <h2>Your recent predictions</h2>
             </div>
 
@@ -79,37 +127,34 @@ function UserDashboard() {
           </div>
 
           <div className="prediction-list">
+            {recentPredictions.length === 0 ? (
+              <p>No predictions yet.</p>
+            ) : (
+              recentPredictions.map((prediction) => (
+                <div
+                  className="prediction-card"
+                  key={prediction.id}
+                >
+                  <div className="prediction-image">
+                    Image
+                  </div>
 
-            <div className="prediction-card">
-              <div className="prediction-image">
-                Image
-              </div>
+                  <div className="prediction-info">
+                    <h3>{prediction.procedure}</h3>
 
-              <div className="prediction-info">
-                <h3>Rhinoplasty</h3>
-                <p>September 8, 2026</p>
-              </div>
+                    <p>
+                      {new Date(
+                        prediction.created_at
+                      ).toLocaleDateString()}
+                    </p>
+                  </div>
 
-              <button>
-                View
-              </button>
-            </div>
-
-            <div className="prediction-card">
-              <div className="prediction-image">
-                Image
-              </div>
-
-              <div className="prediction-info">
-                <h3>Jawline Contouring</h3>
-                <p>September 4, 2026</p>
-              </div>
-
-              <button>
-                View
-              </button>
-            </div>
-
+                  <Link to="/user/predictions">
+                    View
+                  </Link>
+                </div>
+              ))
+            )}
           </div>
         </section>
 
@@ -121,9 +166,7 @@ function UserDashboard() {
             and do not guarantee an actual medical or surgical outcome.
           </p>
         </section>
-
       </main>
-
     </div>
   );
 }
