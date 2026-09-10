@@ -1,24 +1,30 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./TryAI.css";
 import { Upload, Sparkles, Info } from "lucide-react";
 
 function TryAI() {
+  const navigate = useNavigate();
+
   const [selectedImage, setSelectedImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
   const [procedure, setProcedure] = useState("");
   const [consent, setConsent] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   function handleImageChange(event) {
     const file = event.target.files[0];
 
     if (file) {
+      setImageFile(file);
+
       const imageURL = URL.createObjectURL(file);
       setSelectedImage(imageURL);
     }
   }
 
-  function handleGenerate() {
-    if (!selectedImage) {
+  async function handleGenerate() {
+    if (!imageFile) {
       alert("Please upload a facial image.");
       return;
     }
@@ -33,7 +39,67 @@ function TryAI() {
       return;
     }
 
-window.location.href = "/user/predictions";
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+      alert("Please log in first.");
+      navigate("/user/login");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const formData = new FormData();
+
+      formData.append("image", imageFile);
+      formData.append("procedure", procedure);
+
+      const aiResponse = await fetch(
+        "http://localhost:5000/api/ai/prediction",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const aiData = await aiResponse.json();
+
+      if (!aiResponse.ok) {
+        alert(aiData.error || aiData.message);
+        return;
+      }
+
+      const saveResponse = await fetch(
+        "http://localhost:5000/api/predictions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            procedure: procedure,
+            original_image: imageFile.name,
+            generated_image: aiData.image,
+          }),
+        }
+      );
+
+      const saveData = await saveResponse.json();
+
+      if (saveResponse.ok) {
+        alert("Prediction generated and saved successfully.");
+        navigate("/user/predictions");
+      } else {
+        alert(saveData.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Could not connect to the server.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -75,16 +141,10 @@ window.location.href = "/user/predictions";
             you would like to explore.
           </p>
         </div>
-        {/* Bootstrap Alert🛑
-        <div className="alert alert-warning" role="alert">
-          AI-generated previews are for visualization purposes only and do not
-          guarantee actual medical or surgical results.
-        </div> */}
 
         <div className="try-ai-content">
           <section className="upload-card">
             <div className="upload-area">
-
               {selectedImage ? (
                 <img
                   src={selectedImage}
@@ -93,11 +153,11 @@ window.location.href = "/user/predictions";
                 />
               ) : (
                 <>
-                   {/* Lucide React Icon⬆️ */}
-              <div className="upload-icon">
-                <Upload size={28} />
-              </div>
-                    <h2>Upload your photo</h2>
+                  <div className="upload-icon">
+                    <Upload size={28} />
+                  </div>
+
+                  <h2>Upload your photo</h2>
 
                   <p>
                     Choose a clear, front-facing facial image.
@@ -107,10 +167,9 @@ window.location.href = "/user/predictions";
 
               <input
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp"
                 onChange={handleImageChange}
               />
-
             </div>
           </section>
 
@@ -127,11 +186,15 @@ window.location.href = "/user/predictions";
                 onChange={(event) => setProcedure(event.target.value)}
               >
                 <option value="">Select procedure</option>
-                <option value="rhinoplasty">Rhinoplasty</option>
-                <option value="lip-fillers">Lip Fillers</option>
-                <option value="jawline">Jawline Contouring</option>
-                <option value="chin">Chin Enhancement</option>
-                <option value="facelift">Facelift</option>
+                <option value="Rhinoplasty">Rhinoplasty</option>
+                <option value="Lip Fillers">Lip Fillers</option>
+                <option value="Jawline Contouring">
+                  Jawline Contouring
+                </option>
+                <option value="Chin Enhancement">
+                  Chin Enhancement
+                </option>
+                <option value="Facelift">Facelift</option>
               </select>
             </div>
 
@@ -139,7 +202,9 @@ window.location.href = "/user/predictions";
               <input
                 type="checkbox"
                 checked={consent}
-                onChange={(event) => setConsent(event.target.checked)}
+                onChange={(event) =>
+                  setConsent(event.target.checked)
+                }
               />
 
               <p>
@@ -149,22 +214,26 @@ window.location.href = "/user/predictions";
               </p>
             </div>
 
-   {/* Lucide React button❇️ */}
             <button
-  className="generate-button"
-  onClick={handleGenerate}
->
-  <Sparkles size={18} />
-  Generate AI Preview
-</button>
+              className="generate-button"
+              onClick={handleGenerate}
+              disabled={loading}
+            >
+              <Sparkles size={18} />
+
+              {loading
+                ? "Generating..."
+                : "Generate AI Preview"}
+            </button>
           </section>
         </div>
 
         <section className="try-ai-disclaimer">
-<h3>
-  <Info size={17} />
-  Before you continue
-</h3>
+          <h3>
+            <Info size={17} />
+            Before you continue
+          </h3>
+
           <p>
             Lumina Aesthetics provides AI-generated visual simulations for
             consultation and educational purposes. Always discuss cosmetic
