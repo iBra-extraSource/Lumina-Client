@@ -1,89 +1,135 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./UserProfile.css";
 
 function UserProfile() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  async function getUser() {
+    try {
+      const userId = localStorage.getItem("userId");
+
+      if (!userId) {
+        return;
+      }
+
+      const response = await fetch(
+        `http://localhost:5000/api/users/${userId}`
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setUser(data);
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Could not connect to the server.");
+    }
+  }
+
+  if (!user) {
+    return (
+      <div className="user-profile-page">
+        <main className="user-profile-main">
+          <p>Loading profile...</p>
+        </main>
+      </div>
+    );
+  }
+
   return (
-    <div className="user-profile">
-      <aside className="profile-sidebar">
-        <Link to="/" className="profile-logo">
+    <div className="user-profile-page">
+      <aside className="user-profile-sidebar">
+        <Link to="/" className="user-profile-logo">
           Lumina Aesthetics
         </Link>
 
-        <nav className="profile-nav">
-          <Link to="/user/dashboard">Dashboard</Link>
-          <Link to="/user/try-ai">Try AI</Link>
-          <Link to="/user/predictions">My Predictions</Link>
-          <Link to="/user/profile" className="active-link">
+        <nav className="user-profile-nav">
+          <Link to="/user/dashboard">
+            Dashboard
+          </Link>
+
+          <Link to="/user/try-ai">
+            Try AI
+          </Link>
+
+          <Link to="/user/predictions">
+            My Predictions
+          </Link>
+
+          <Link
+            to="/user/profile"
+            className="active-link"
+          >
             My Profile
           </Link>
         </nav>
 
-        <Link to="/" className="profile-logout">
+        <Link to="/" className="user-profile-logout">
           Log Out
         </Link>
       </aside>
 
-      <main className="profile-main">
-        <div className="profile-header">
-          <div>
-            <p className="profile-label">My Profile</p>
-            <h1>Your personal information.</h1>
+      <main className="user-profile-main">
+        <div className="user-profile-header">
+          <p className="user-profile-label">
+            Your Account
+          </p>
+
+          <h1>{user.full_name}</h1>
+
+          <p>
+            Review your personal account information.
+          </p>
+        </div>
+
+        <section className="user-profile-card">
+          <div className="user-profile-row">
+            <p className="user-profile-field-label">
+              Full Name
+            </p>
+
+            <p>{user.full_name}</p>
+          </div>
+
+          <div className="user-profile-row">
+            <p className="user-profile-field-label">
+              Email
+            </p>
+
+            <p>{user.email}</p>
+          </div>
+
+          <div className="user-profile-row">
+            <p className="user-profile-field-label">
+              Date of Birth
+            </p>
+
             <p>
-              Manage your account details and keep your information up to date.
+              {user.date_of_birth
+                ? new Date(
+                    user.date_of_birth
+                  ).toLocaleDateString()
+                : "Not provided"}
             </p>
           </div>
 
-          <button className="edit-profile-button">
-            Edit Profile
-          </button>
-        </div>
+          <div className="user-profile-row">
+            <p className="user-profile-field-label">
+              Gender
+            </p>
 
-        <section className="profile-card">
-          <div className="profile-image">
-            <p>Profile Photo</p>
+            <p>
+              {user.gender || "Not provided"}
+            </p>
           </div>
-
-          <div className="profile-details">
-            <div className="profile-field">
-              <p className="field-label">Full Name</p>
-              <p className="field-value">Sample User</p>
-            </div>
-
-            <div className="profile-field">
-              <p className="field-label">Email</p>
-              <p className="field-value">user@email.com</p>
-            </div>
-
-            <div className="profile-field">
-              <p className="field-label">Date of Birth</p>
-              <p className="field-value">January 1, 2000</p>
-            </div>
-
-            <div className="profile-field">
-              <p className="field-label">Gender</p>
-              <p className="field-value">Not specified</p>
-            </div>
-          </div>
-        </section>
-
-        <section className="profile-section">
-          <div>
-            <p className="profile-label">Account</p>
-            <h2>Account settings</h2>
-          </div>
-
-          <div className="profile-actions">
-            <button>Change Password</button>
-            <button className="danger-button">Delete Account</button>
-          </div>
-        </section>
-
-        <section className="profile-note">
-          <h3>Privacy</h3>
-          <p>
-            Your facial images and account information should only be used
-            for the purposes you agree to within Lumina Aesthetics.
-          </p>
         </section>
       </main>
     </div>
