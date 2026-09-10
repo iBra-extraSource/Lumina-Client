@@ -79,7 +79,7 @@ function NewPrediction() {
       formData.append("image", imageFile);
       formData.append("procedure", procedure);
 
-      const response = await fetch(
+      const aiResponse = await fetch(
         "http://localhost:5000/api/ai/prediction",
         {
           method: "POST",
@@ -87,10 +87,10 @@ function NewPrediction() {
         }
       );
 
-      const data = await response.json();
+      const aiData = await aiResponse.json();
 
-      if (!response.ok) {
-        alert(data.error || data.message);
+      if (!aiResponse.ok) {
+        alert(aiData.error || aiData.message);
         return;
       }
 
@@ -108,7 +108,7 @@ function NewPrediction() {
             patient_id: patient,
             procedure: procedure,
             original_image: imageFile.name,
-            generated_image: data.image,
+            generated_image: aiData.image,
             doctor_notes: doctorNotes,
           }),
         }
@@ -140,10 +140,17 @@ function NewPrediction() {
         <nav className="new-prediction-nav">
           <Link to="/clinic/dashboard">Dashboard</Link>
           <Link to="/clinic/patients">Patients</Link>
-          <Link to="/clinic/predictions" className="active-link">
+
+          <Link
+            to="/clinic/predictions"
+            className="active-link"
+          >
             Predictions
           </Link>
-          <Link to="/clinic/profile">Clinic Profile</Link>
+
+          <Link to="/clinic/profile">
+            Clinic Profile
+          </Link>
         </nav>
 
         <Link to="/" className="new-prediction-logout">
@@ -161,8 +168,9 @@ function NewPrediction() {
             <h1>Create a new prediction.</h1>
 
             <p>
-              Select a patient, upload a facial image, and choose the
-              procedure you would like to visualize.
+              Select a patient, upload a facial image,
+              and choose the procedure you would like
+              to visualize.
             </p>
           </div>
 
@@ -186,9 +194,13 @@ function NewPrediction() {
 
             <select
               value={patient}
-              onChange={(event) => setPatient(event.target.value)}
+              onChange={(event) =>
+                setPatient(event.target.value)
+              }
             >
-              <option value="">Select patient</option>
+              <option value="">
+                Select patient
+              </option>
 
               {patients.map((currentPatient) => (
                 <option
@@ -251,18 +263,33 @@ function NewPrediction() {
 
               <select
                 value={procedure}
-                onChange={(event) => setProcedure(event.target.value)}
+                onChange={(event) =>
+                  setProcedure(event.target.value)
+                }
               >
-                <option value="">Select procedure</option>
-                <option value="Rhinoplasty">Rhinoplasty</option>
-                <option value="Lip Fillers">Lip Fillers</option>
+                <option value="">
+                  Select procedure
+                </option>
+
+                <option value="Rhinoplasty">
+                  Rhinoplasty
+                </option>
+
+                <option value="Lip Fillers">
+                  Lip Fillers
+                </option>
+
                 <option value="Jawline Contouring">
                   Jawline Contouring
                 </option>
+
                 <option value="Chin Enhancement">
                   Chin Enhancement
                 </option>
-                <option value="Facelift">Facelift</option>
+
+                <option value="Facelift">
+                  Facelift
+                </option>
               </select>
             </div>
 
@@ -289,8 +316,9 @@ function NewPrediction() {
               />
 
               <p>
-                I confirm that the patient has agreed to the use of their
-                facial image for this AI-generated consultation preview.
+                I confirm that the patient has agreed
+                to the use of their facial image for
+                this AI-generated consultation preview.
               </p>
             </div>
 
@@ -310,8 +338,9 @@ function NewPrediction() {
           <h3>Clinical use only</h3>
 
           <p>
-            AI-generated previews are visual consultation aids. They should
-            support professional discussion and must not be presented as
+            AI-generated previews are visual consultation
+            aids. They should support professional
+            discussion and must not be presented as
             guaranteed medical or surgical outcomes.
           </p>
         </section>
