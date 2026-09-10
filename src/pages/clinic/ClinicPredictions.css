@@ -1,450 +1,135 @@
-@import "../../theme.css";
-
 .clinic-predictions-page {
   min-height: 100vh;
-
-  display: grid;
-  grid-template-columns: 250px 1fr;
-
-  background:
-    radial-gradient(
-      circle at top right,
-      rgba(182, 154, 200, 0.1),
-      transparent 30%
-    ),
-    var(--background);
-
+  background: var(--background);
   color: var(--text-primary);
-
   font-family: var(--font-body);
 }
 
-/* Sidebar */
-
-.clinic-predictions-sidebar {
-  min-height: 100vh;
-
-  padding: 34px 24px;
-
-  display: flex;
-  flex-direction: column;
-
-  position: sticky;
-  top: 0;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.98),
-      rgba(247, 243, 250, 0.96)
-    );
-
-  border-right: 1px solid var(--border);
-}
-
-.clinic-predictions-logo {
-  margin-bottom: 56px;
-
-  color: var(--text-primary);
-
-  font-family: var(--font-display);
-  font-size: 22px;
-
-  text-decoration: none;
-}
-
-.clinic-predictions-nav {
-  display: flex;
-  flex-direction: column;
-
-  gap: 8px;
-}
-
-.clinic-predictions-nav a,
-.clinic-predictions-logout {
-  padding: 12px 14px;
-
-  border-radius: 12px;
-
-  color: var(--text-secondary);
-
-  text-decoration: none;
-
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.clinic-predictions-nav a:hover {
-  background: var(--surface-soft);
-
-  color: var(--primary);
-}
-
-.clinic-predictions-nav .active-link {
-  background: var(--primary-soft);
-
-  color: var(--primary);
-
-  font-weight: 600;
-}
-
-.clinic-predictions-logout {
-  margin-top: auto;
-
-  color: var(--text-muted);
-}
-
-/* Main */
-
 .clinic-predictions-main {
-  width: 100%;
-  max-width: 1250px;
-
+  max-width: var(--content-max);
   margin: 0 auto;
-
-  padding: 52px 60px;
+  padding: 56px var(--gutter);
 }
 
 .clinic-predictions-header {
-  margin-bottom: 34px;
-
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
-
-  gap: 30px;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 40px;
 }
 
 .clinic-predictions-label {
-  margin: 0 0 8px;
-
+  margin: 0 0 10px;
   color: var(--primary);
-
-  font-size: 12px;
-  font-weight: 700;
-
+  font-size: 14px;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
 .clinic-predictions-header h1 {
-  margin: 0 0 14px;
-
+  margin: 0 0 12px;
   font-family: var(--font-display);
-
-  font-size: clamp(3rem, 5vw, 4.5rem);
-
+  font-size: 42px;
   font-weight: 400;
-
-  line-height: 1;
-
-  letter-spacing: -0.04em;
 }
 
-.clinic-predictions-header p:last-child {
-  max-width: 620px;
-
+.clinic-predictions-header p {
   margin: 0;
-
+  max-width: 620px;
   color: var(--text-secondary);
-
-  font-size: 15px;
   line-height: 1.7;
 }
 
-.new-clinic-prediction-button {
-  min-width: 150px;
-  min-height: 48px;
-
-  padding: 0 22px;
-
-  display: flex;
+.clinic-predictions-button {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  border-radius: 999px;
-
+  min-height: 46px;
+  padding: 0 20px;
+  border-radius: var(--radius-md);
   background: var(--primary);
-
   color: var(--white);
-
   text-decoration: none;
-
-  font-size: 14px;
   font-weight: 600;
 }
 
-/* Controls */
-
-.clinic-predictions-controls {
-  margin-bottom: 24px;
-
-  display: flex;
-
-  gap: 12px;
+.clinic-predictions-button:hover {
+  background: var(--primary-hover);
 }
 
-.clinic-predictions-controls input {
-  flex: 1;
-
-  min-height: 46px;
-
-  padding: 0 15px;
-
+.clinic-predictions-empty {
+  padding: 56px 32px;
   border: 1px solid var(--border);
-
-  border-radius: 12px;
-
+  border-radius: var(--radius-lg);
   background: var(--surface);
-
-  font-family: var(--font-body);
-
-  outline: none;
+  box-shadow: var(--shadow-sm);
+  text-align: center;
 }
 
-.clinic-predictions-controls input:focus {
-  border-color: var(--primary);
-}
-
-.clinic-predictions-controls select {
-  min-width: 190px;
-
-  padding: 0 14px;
-
-  border: 1px solid var(--border);
-
-  border-radius: 12px;
-
-  background: var(--surface);
-
-  color: var(--text-primary);
-
-  font-family: var(--font-body);
-}
-
-/* Prediction cards */
-
-.clinic-predictions-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-
-  gap: 22px;
-
-  margin-bottom: 28px;
-}
-
-.clinic-prediction-card {
-  overflow: hidden;
-
-  background: var(--surface);
-
-  border: 1px solid var(--border);
-
-  border-radius: 24px;
-
-  box-shadow:
-    0 12px 34px rgba(47, 35, 57, 0.06);
-
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
-}
-
-.clinic-prediction-card:hover {
-  transform: translateY(-5px);
-
-  box-shadow:
-    0 18px 42px rgba(47, 35, 57, 0.1);
-}
-
-.clinic-prediction-image {
-  height: 220px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background:
-    linear-gradient(
-      135deg,
-      var(--primary-soft),
-      var(--surface-soft)
-    );
-
-  color: var(--text-muted);
-
-  font-size: 12px;
-}
-
-.clinic-prediction-content {
-  padding: 24px;
-}
-
-.clinic-prediction-date {
-  margin: 0 0 8px;
-
-  color: var(--text-muted);
-
-  font-size: 11px;
-
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.clinic-prediction-content h2 {
-  margin: 0 0 6px;
-
+.clinic-predictions-empty h3 {
+  margin: 0 0 10px;
   font-family: var(--font-display);
-
-  font-size: 25px;
-
+  font-size: 28px;
   font-weight: 400;
 }
 
-.clinic-prediction-patient {
-  margin: 0 0 14px !important;
-
-  color: var(--primary) !important;
-
-  font-size: 12px !important;
-
-  font-weight: 600;
-}
-
-.clinic-prediction-content > p {
-  margin: 0 0 20px;
-
+.clinic-predictions-empty p {
+  margin: 0 0 24px;
   color: var(--text-secondary);
-
-  font-size: 13px;
-  line-height: 1.6;
 }
 
-.clinic-prediction-content button {
-  width: 100%;
-
-  min-height: 42px;
-
-  border: 1px solid var(--border);
-
-  border-radius: 999px;
-
-  background: var(--surface);
-
-  color: var(--text-primary);
-
-  font-family: var(--font-body);
-
-  font-size: 13px;
-  font-weight: 600;
-
-  cursor: pointer;
-}
-
-.clinic-prediction-content button:hover {
-  border-color: var(--primary);
-
+.clinic-predictions-empty a {
   color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
 }
 
-/* Note */
+.clinic-predictions-list {
+  display: grid;
+  gap: 18px;
+}
 
-.clinic-predictions-note {
+.clinic-prediction-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
   padding: 22px 24px;
-
-  background: var(--primary-soft);
-
-  border: 1px solid rgba(111, 75, 139, 0.12);
-
-  border-radius: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
 }
 
-.clinic-predictions-note h3 {
+.clinic-prediction-card h3 {
   margin: 0 0 6px;
+  font-size: 18px;
+}
 
+.clinic-prediction-card p {
+  margin: 4px 0 0;
+  color: var(--text-muted);
   font-size: 14px;
 }
 
-.clinic-predictions-note p {
-  margin: 0;
-
-  max-width: 800px;
-
-  color: var(--text-secondary);
-
-  font-size: 13px;
-  line-height: 1.6;
+.clinic-prediction-card a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
 }
 
-/* Responsive */
-
-@media (max-width: 1050px) {
-  .clinic-predictions-page {
-    grid-template-columns: 210px 1fr;
-  }
-
+@media (max-width: 768px) {
   .clinic-predictions-main {
-    padding: 42px 36px;
-  }
-
-  .clinic-predictions-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 750px) {
-  .clinic-predictions-page {
-    display: block;
-  }
-
-  .clinic-predictions-sidebar {
-    min-height: auto;
-
-    position: static;
-
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .clinic-predictions-logo {
-    margin-bottom: 22px;
-  }
-
-  .clinic-predictions-nav {
-    flex-direction: row;
-
-    overflow-x: auto;
-  }
-
-  .clinic-predictions-nav a {
-    white-space: nowrap;
-  }
-
-  .clinic-predictions-logout {
-    display: none;
-  }
-
-  .clinic-predictions-main {
-    padding: 34px 20px;
+    padding: 32px 20px;
   }
 
   .clinic-predictions-header {
     flex-direction: column;
   }
 
-  .new-clinic-prediction-button {
+  .clinic-predictions-button {
     width: 100%;
-  }
-
-  .clinic-predictions-controls {
-    flex-direction: column;
-  }
-
-  .clinic-predictions-controls select {
-    min-height: 46px;
-  }
-
-  .clinic-predictions-grid {
-    grid-template-columns: 1fr;
   }
 }
