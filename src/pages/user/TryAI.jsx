@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./TryAI.css";
+import { Upload, Sparkles, Info } from "lucide-react";
 
 function TryAI() {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -74,6 +75,11 @@ window.location.href = "/user/predictions";
             you would like to explore.
           </p>
         </div>
+        {/* Bootstrap Alert🛑
+        <div className="alert alert-warning" role="alert">
+          AI-generated previews are for visualization purposes only and do not
+          guarantee actual medical or surgical results.
+        </div> */}
 
         <div className="try-ai-content">
           <section className="upload-card">
@@ -87,9 +93,11 @@ window.location.href = "/user/predictions";
                 />
               ) : (
                 <>
-                  <div className="upload-icon">+</div>
-
-                  <h2>Upload your photo</h2>
+                   {/* Lucide React Icon⬆️ */}
+              <div className="upload-icon">
+                <Upload size={28} />
+              </div>
+                    <h2>Upload your photo</h2>
 
                   <p>
                     Choose a clear, front-facing facial image.
@@ -141,18 +149,22 @@ window.location.href = "/user/predictions";
               </p>
             </div>
 
+   {/* Lucide React button❇️ */}
             <button
-              className="generate-button"
-              onClick={handleGenerate}
-            >
-              Generate AI Preview
-            </button>
+  className="generate-button"
+  onClick={handleGenerate}
+>
+  <Sparkles size={18} />
+  Generate AI Preview
+</button>
           </section>
         </div>
 
         <section className="try-ai-disclaimer">
-          <h3>Before you continue</h3>
-
+<h3>
+  <Info size={17} />
+  Before you continue
+</h3>
           <p>
             Lumina Aesthetics provides AI-generated visual simulations for
             consultation and educational purposes. Always discuss cosmetic
