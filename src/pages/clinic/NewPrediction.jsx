@@ -1,29 +1,62 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./NewPrediction.css";
 
 function NewPrediction() {
+  const navigate = useNavigate();
+
+  const [patients, setPatients] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
   const [patient, setPatient] = useState("");
   const [procedure, setProcedure] = useState("");
+  const [doctorNotes, setDoctorNotes] = useState("");
   const [consent, setConsent] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    getPatients();
+  }, []);
+
+  async function getPatients() {
+    try {
+      const clinicId = localStorage.getItem("clinicId");
+
+      const response = await fetch(
+        `http://localhost:5000/api/patients?clinic_id=${clinicId}`
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setPatients(data);
+      } else {
+        alert("Failed to load patients.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Could not connect to the server.");
+    }
+  }
 
   function handleImageChange(event) {
     const file = event.target.files[0];
 
     if (file) {
+      setImageFile(file);
+
       const imageURL = URL.createObjectURL(file);
       setSelectedImage(imageURL);
     }
   }
 
-  function handleGenerate() {
+  async function handleGenerate() {
     if (!patient) {
       alert("Please select a patient.");
       return;
     }
 
-    if (!selectedImage) {
+    if (!imageFile) {
       alert("Please upload a facial image.");
       return;
     }
@@ -38,7 +71,64 @@ function NewPrediction() {
       return;
     }
 
-window.location.href = "/clinic/predictions";  }
+    try {
+      setLoading(true);
+
+      const formData = new FormData();
+
+      formData.append("image", imageFile);
+      formData.append("procedure", procedure);
+
+      const response = await fetch(
+        "http://localhost:5000/api/ai/prediction",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || data.message);
+        return;
+      }
+
+      const clinicId = localStorage.getItem("clinicId");
+
+      const saveResponse = await fetch(
+        "http://localhost:5000/api/predictions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            clinic_id: clinicId,
+            patient_id: patient,
+            procedure: procedure,
+            original_image: imageFile.name,
+            generated_image: data.image,
+            doctor_notes: doctorNotes,
+          }),
+        }
+      );
+
+      const saveData = await saveResponse.json();
+
+      if (saveResponse.ok) {
+        alert("Prediction generated and saved successfully.");
+        navigate("/clinic/predictions");
+      } else {
+        alert(saveData.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Could not connect to the server.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="new-prediction-page">
@@ -50,11 +140,9 @@ window.location.href = "/clinic/predictions";  }
         <nav className="new-prediction-nav">
           <Link to="/clinic/dashboard">Dashboard</Link>
           <Link to="/clinic/patients">Patients</Link>
-
           <Link to="/clinic/predictions" className="active-link">
             Predictions
           </Link>
-
           <Link to="/clinic/profile">Clinic Profile</Link>
         </nav>
 
@@ -101,9 +189,15 @@ window.location.href = "/clinic/predictions";  }
               onChange={(event) => setPatient(event.target.value)}
             >
               <option value="">Select patient</option>
-              <option value="1">Sample Patient</option>
-              <option value="2">Example Patient</option>
-              <option value="3">Demo Patient</option>
+
+              {patients.map((currentPatient) => (
+                <option
+                  key={currentPatient.id}
+                  value={currentPatient.id}
+                >
+                  {currentPatient.full_name}
+                </option>
+              ))}
             </select>
           </div>
         </section>
@@ -139,7 +233,7 @@ window.location.href = "/clinic/predictions";  }
 
               <input
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp"
                 onChange={handleImageChange}
               />
             </div>
@@ -160,11 +254,15 @@ window.location.href = "/clinic/predictions";  }
                 onChange={(event) => setProcedure(event.target.value)}
               >
                 <option value="">Select procedure</option>
-                <option value="rhinoplasty">Rhinoplasty</option>
-                <option value="lip-fillers">Lip Fillers</option>
-                <option value="jawline">Jawline Contouring</option>
-                <option value="chin">Chin Enhancement</option>
-                <option value="facelift">Facelift</option>
+                <option value="Rhinoplasty">Rhinoplasty</option>
+                <option value="Lip Fillers">Lip Fillers</option>
+                <option value="Jawline Contouring">
+                  Jawline Contouring
+                </option>
+                <option value="Chin Enhancement">
+                  Chin Enhancement
+                </option>
+                <option value="Facelift">Facelift</option>
               </select>
             </div>
 
@@ -173,6 +271,10 @@ window.location.href = "/clinic/predictions";  }
 
               <textarea
                 rows="5"
+                value={doctorNotes}
+                onChange={(event) =>
+                  setDoctorNotes(event.target.value)
+                }
                 placeholder="Optional notes about the desired cosmetic change..."
               ></textarea>
             </div>
@@ -181,7 +283,9 @@ window.location.href = "/clinic/predictions";  }
               <input
                 type="checkbox"
                 checked={consent}
-                onChange={(event) => setConsent(event.target.checked)}
+                onChange={(event) =>
+                  setConsent(event.target.checked)
+                }
               />
 
               <p>
@@ -193,8 +297,11 @@ window.location.href = "/clinic/predictions";  }
             <button
               className="generate-clinic-prediction-button"
               onClick={handleGenerate}
+              disabled={loading}
             >
-              Generate AI Preview
+              {loading
+                ? "Generating..."
+                : "Generate AI Preview"}
             </button>
           </section>
         </div>
