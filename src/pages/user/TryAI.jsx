@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./TryAI.css";
 import { Upload, Sparkles, Info } from "lucide-react";
-
+import Alert from "@mui/material/Alert";
 function TryAI() {
   const navigate = useNavigate();
 
@@ -141,6 +141,10 @@ function TryAI() {
             you would like to explore.
           </p>
         </div>
+      <Alert severity="warning" sx={{ marginBottom: "24px" }}>
+  AI-generated previews are for visualization purposes only and do not
+  guarantee actual medical or surgical results.
+</Alert>
 
         <div className="try-ai-content">
           <section className="upload-card">
