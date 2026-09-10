@@ -1,7 +1,65 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./AddPatient.css";
 
 function AddPatient() {
+  const navigate = useNavigate();
+
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [gender, setGender] = useState("");
+  const [procedureInterest, setProcedureInterest] = useState("");
+  const [consultationNotes, setConsultationNotes] = useState("");
+  const [consent, setConsent] = useState(false);
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    if (!consent) {
+      alert("Please confirm patient consent.");
+      return;
+    }
+
+    try {
+      const clinicId = localStorage.getItem("clinicId");
+
+const response = await fetch(
+  "http://localhost:5000/api/patients",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      clinic_id: clinicId,
+      full_name: fullName,
+      email: email,
+      phone: phone,
+      date_of_birth: dateOfBirth,
+      gender: gender,
+      procedure_interest: procedureInterest,
+      consultation_notes: consultationNotes,
+    }),
+  }
+);
+
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Patient added successfully.");
+        navigate("/clinic/patients");
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Could not connect to the server.");
+    }
+  }
+
   return (
     <div className="add-patient-page">
       <aside className="add-patient-sidebar">
@@ -51,13 +109,11 @@ function AddPatient() {
           </Link>
         </div>
 
-<form
-  className="add-patient-form"
-  onSubmit={(event) => {
-    event.preventDefault();
-    window.location.href = "/clinic/patients";
-  }}
->          <section className="patient-form-section">
+        <form
+          className="add-patient-form"
+          onSubmit={handleSubmit}
+        >
+          <section className="patient-form-section">
             <div className="patient-section-heading">
               <p className="add-patient-label">
                 Personal Information
@@ -73,6 +129,9 @@ function AddPatient() {
                 <input
                   type="text"
                   placeholder="Enter full name"
+                  value={fullName}
+                  onChange={(event) => setFullName(event.target.value)}
+                  required
                 />
               </div>
 
@@ -82,6 +141,8 @@ function AddPatient() {
                 <input
                   type="email"
                   placeholder="patient@email.com"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
                 />
               </div>
 
@@ -91,23 +152,32 @@ function AddPatient() {
                 <input
                   type="tel"
                   placeholder="+962"
+                  value={phone}
+                  onChange={(event) => setPhone(event.target.value)}
                 />
               </div>
 
               <div className="patient-form-group">
                 <label>Date of Birth</label>
 
-                <input type="date" />
+                <input
+                  type="date"
+                  value={dateOfBirth}
+                  onChange={(event) => setDateOfBirth(event.target.value)}
+                />
               </div>
 
               <div className="patient-form-group">
                 <label>Gender</label>
 
-                <select>
+                <select
+                  value={gender}
+                  onChange={(event) => setGender(event.target.value)}
+                >
                   <option value="">Select gender</option>
-                  <option value="female">Female</option>
-                  <option value="male">Male</option>
-                  <option value="other">
+                  <option value="Female">Female</option>
+                  <option value="Male">Male</option>
+                  <option value="Prefer not to say">
                     Prefer not to say
                   </option>
                 </select>
@@ -116,28 +186,33 @@ function AddPatient() {
               <div className="patient-form-group">
                 <label>Procedure Interest</label>
 
-                <select>
+                <select
+                  value={procedureInterest}
+                  onChange={(event) =>
+                    setProcedureInterest(event.target.value)
+                  }
+                >
                   <option value="">
                     Select procedure
                   </option>
 
-                  <option value="rhinoplasty">
+                  <option value="Rhinoplasty">
                     Rhinoplasty
                   </option>
 
-                  <option value="lip-fillers">
+                  <option value="Lip Fillers">
                     Lip Fillers
                   </option>
 
-                  <option value="jawline">
+                  <option value="Jawline Contouring">
                     Jawline Contouring
                   </option>
 
-                  <option value="chin">
+                  <option value="Chin Enhancement">
                     Chin Enhancement
                   </option>
 
-                  <option value="facelift">
+                  <option value="Facelift">
                     Facelift
                   </option>
                 </select>
@@ -160,13 +235,21 @@ function AddPatient() {
               <textarea
                 rows="6"
                 placeholder="Add any relevant notes about the patient or consultation..."
+                value={consultationNotes}
+                onChange={(event) =>
+                  setConsultationNotes(event.target.value)
+                }
               ></textarea>
             </div>
           </section>
 
           <section className="patient-consent-section">
             <div className="patient-consent">
-              <input type="checkbox" />
+              <input
+                type="checkbox"
+                checked={consent}
+                onChange={(event) => setConsent(event.target.checked)}
+              />
 
               <p>
                 The patient has been informed about the use of their

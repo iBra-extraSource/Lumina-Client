@@ -1,7 +1,47 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./ClinicLogin.css";
 
 function ClinicLogin() {
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/clinics/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+          localStorage.setItem("clinicId", data.clinic.id);
+
+        alert("Login successful.");
+        navigate("/clinic/dashboard");
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Could not connect to the server.");
+    }
+  }
+
   return (
     <div className="clinic-login-page">
       <div className="clinic-login-card">
@@ -20,19 +60,19 @@ function ClinicLogin() {
           </p>
         </div>
 
-            <form
-            className="clinic-login-form"
-            onSubmit={(event) => {
-                event.preventDefault();
-                window.location.href = "/clinic/dashboard";
-            }}
-            >         
-             <div className="clinic-login-group">
+        <form
+          className="clinic-login-form"
+          onSubmit={handleSubmit}
+        >
+          <div className="clinic-login-group">
             <label>Email</label>
 
             <input
               type="email"
               placeholder="clinic@email.com"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
             />
           </div>
 
@@ -42,6 +82,9 @@ function ClinicLogin() {
             <input
               type="password"
               placeholder="Enter your password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
             />
           </div>
 

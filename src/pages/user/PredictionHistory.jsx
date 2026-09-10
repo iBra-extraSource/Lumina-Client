@@ -1,121 +1,101 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./PredictionHistory.css";
 
 function PredictionHistory() {
+  const [predictions, setPredictions] = useState([]);
+
+  useEffect(() => {
+    getPredictions();
+  }, []);
+
+  async function getPredictions() {
+    try {
+      const userId = localStorage.getItem("userId");
+
+      if (!userId) {
+        return;
+      }
+
+      const response = await fetch(
+        `http://localhost:5000/api/predictions?user_id=${userId}`
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setPredictions(data);
+      } else {
+        alert("Failed to load predictions.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Could not connect to the server.");
+    }
+  }
+
   return (
     <div className="prediction-history-page">
-      <aside className="history-sidebar">
-        <Link to="/" className="history-logo">
-          Lumina Aesthetics
-        </Link>
-
-        <nav className="history-nav">
-          <Link to="/user/dashboard">Dashboard</Link>
-          <Link to="/user/try-ai">Try AI</Link>
-
-          <Link to="/user/predictions" className="active-link">
-            My Predictions
-          </Link>
-
-          <Link to="/user/profile">My Profile</Link>
-        </nav>
-
-        <Link to="/" className="history-logout">
-          Log Out
-        </Link>
-      </aside>
-
-      <main className="history-main">
-        <div className="history-header">
+      <main className="prediction-history-main">
+        <div className="prediction-history-header">
           <div>
-            <p className="history-label">Prediction History</p>
+            <p className="prediction-history-label">
+              Your Visualizations
+            </p>
 
-            <h1>Your saved AI previews.</h1>
+            <h1>Prediction History</h1>
 
             <p>
-              Review previous cosmetic procedure simulations and revisit
-              your results at any time.
+              Review your previous cosmetic consultation visualizations.
             </p>
           </div>
 
           <Link
             to="/user/try-ai"
-            className="history-primary-button"
+            className="prediction-history-button"
           >
             New Prediction
           </Link>
         </div>
 
-        <section className="history-grid">
-          <article className="history-card">
-            <div className="history-image">
-              Preview Image
-            </div>
+        {predictions.length === 0 ? (
+          <div className="prediction-empty">
+            <h3>No predictions yet</h3>
 
-            <div className="history-card-content">
-              <p className="history-card-date">
-                September 8, 2026
-              </p>
+            <p>
+              Your generated cosmetic visualizations will appear here.
+            </p>
 
-              <h2>Rhinoplasty</h2>
+            <Link to="/user/try-ai">
+              Try AI
+            </Link>
+          </div>
+        ) : (
+          <div className="prediction-list">
+            {predictions.map((prediction) => (
+              <div
+                className="prediction-card"
+                key={prediction.id}
+              >
+                <div>
+                  <h3>{prediction.procedure}</h3>
 
-              <p>
-                AI-generated facial preview saved to your account.
-              </p>
+                  <p>
+                    {new Date(
+                      prediction.created_at
+                    ).toLocaleDateString()}
+                  </p>
+                </div>
 
-              <button>View Prediction</button>
-            </div>
-          </article>
-
-          <article className="history-card">
-            <div className="history-image">
-              Preview Image
-            </div>
-
-            <div className="history-card-content">
-              <p className="history-card-date">
-                September 4, 2026
-              </p>
-
-              <h2>Jawline Contouring</h2>
-
-              <p>
-                AI-generated facial preview saved to your account.
-              </p>
-
-              <button>View Prediction</button>
-            </div>
-          </article>
-
-          <article className="history-card">
-            <div className="history-image">
-              Preview Image
-            </div>
-
-            <div className="history-card-content">
-              <p className="history-card-date">
-                August 29, 2026
-              </p>
-
-              <h2>Chin Enhancement</h2>
-
-              <p>
-                AI-generated facial preview saved to your account.
-              </p>
-
-              <button>View Prediction</button>
-            </div>
-          </article>
-        </section>
-
-        <section className="history-note">
-          <h3>Important</h3>
-
-          <p>
-            Saved predictions are AI-generated visual simulations and
-            should not be considered guaranteed medical or surgical results.
-          </p>
-        </section>
+                <Link
+                  to={`/user/predictions/${prediction.id}`}
+                >
+                  View
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );

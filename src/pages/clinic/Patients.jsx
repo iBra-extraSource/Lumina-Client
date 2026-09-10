@@ -1,7 +1,35 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Patients.css";
 
 function Patients() {
+  const [patients, setPatients] = useState([]);
+
+  useEffect(() => {
+    getPatients();
+  }, []);
+
+  async function getPatients() {
+    try {
+      const clinicId = localStorage.getItem("clinicId");
+
+      const response = await fetch(
+        `http://localhost:5000/api/patients?clinic_id=${clinicId}`
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setPatients(data);
+      } else {
+        alert("Failed to load patients.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Could not connect to the server.");
+    }
+  }
+
   return (
     <div className="patients-page">
       <aside className="patients-sidebar">
@@ -10,14 +38,21 @@ function Patients() {
         </Link>
 
         <nav className="patients-nav">
-          <Link to="/clinic/dashboard">Dashboard</Link>
+          <Link to="/clinic/dashboard">
+            Dashboard
+          </Link>
 
           <Link to="/clinic/patients" className="active-link">
             Patients
           </Link>
 
-          <Link to="/clinic/predictions">Predictions</Link>
-          <Link to="/clinic/profile">Clinic Profile</Link>
+          <Link to="/clinic/predictions">
+            Predictions
+          </Link>
+
+          <Link to="/clinic/profile">
+            Clinic Profile
+          </Link>
         </nav>
 
         <Link to="/" className="patients-logout">
@@ -28,7 +63,9 @@ function Patients() {
       <main className="patients-main">
         <div className="patients-header">
           <div>
-            <p className="patients-label">Patient Management</p>
+            <p className="patients-label">
+              Patient Management
+            </p>
 
             <h1>Your patients.</h1>
 
@@ -63,82 +100,54 @@ function Patients() {
           <div className="patients-table-header">
             <p>Patient</p>
             <p>Procedure</p>
-            <p>Last Visit</p>
+            <p>Date Added</p>
             <p>Status</p>
             <p></p>
           </div>
 
-          <div className="patient-row">
-            <div className="patient-name">
-              <div className="patient-avatar">
-                SA
-              </div>
-
-              <div>
-                <h3>Sample Patient</h3>
-                <p>patient@email.com</p>
-              </div>
+          {patients.length === 0 ? (
+            <div className="patient-row">
+              <p>No patients found.</p>
             </div>
+          ) : (
+            patients.map((patient) => (
+              <div
+                className="patient-row"
+                key={patient.id}
+              >
+                <div className="patient-name">
+                  <div className="patient-avatar">
+                    {patient.full_name
+                      ? patient.full_name.charAt(0).toUpperCase()
+                      : "P"}
+                  </div>
 
-            <p>Rhinoplasty</p>
-            <p>Sep 8, 2026</p>
+                  <div>
+                    <h3>{patient.full_name}</h3>
+                    <p>{patient.email || "No email"}</p>
+                  </div>
+                </div>
 
-            <p className="patient-status">
-              Active
-            </p>
+                <p>
+                  {patient.procedure_interest || "Not selected"}
+                </p>
 
-            <Link to="/clinic/patients/1">
-              View
-            </Link>
-          </div>
+                <p>
+                  {patient.created_at
+                    ? new Date(patient.created_at).toLocaleDateString()
+                    : "Unknown"}
+                </p>
 
-          <div className="patient-row">
-            <div className="patient-name">
-              <div className="patient-avatar">
-                MA
+                <p className="patient-status">
+                  Active
+                </p>
+
+                <Link to={`/clinic/patients/${patient.id}`}>
+                  View
+                </Link>
               </div>
-
-              <div>
-                <h3>Example Patient</h3>
-                <p>example@email.com</p>
-              </div>
-            </div>
-
-            <p>Jawline Contouring</p>
-            <p>Sep 6, 2026</p>
-
-            <p className="patient-status">
-              Active
-            </p>
-
-            <Link to="/clinic/patients/2">
-              View
-            </Link>
-          </div>
-
-          <div className="patient-row">
-            <div className="patient-name">
-              <div className="patient-avatar">
-                LA
-              </div>
-
-              <div>
-                <h3>Demo Patient</h3>
-                <p>demo@email.com</p>
-              </div>
-            </div>
-
-            <p>Chin Enhancement</p>
-            <p>Sep 1, 2026</p>
-
-            <p className="patient-status">
-              Active
-            </p>
-
-            <Link to="/clinic/patients/3">
-              View
-            </Link>
-          </div>
+            ))
+          )}
         </section>
       </main>
     </div>

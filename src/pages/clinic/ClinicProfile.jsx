@@ -1,7 +1,45 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./ClinicProfile.css";
 
 function ClinicProfile() {
+  const [clinic, setClinic] = useState(null);
+
+  useEffect(() => {
+    getClinic();
+  }, []);
+
+  async function getClinic() {
+    try {
+      const clinicId = localStorage.getItem("clinicId");
+
+      const response = await fetch(
+        `http://localhost:5000/api/clinics/${clinicId}`
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setClinic(data);
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Could not connect to the server.");
+    }
+  }
+
+  if (!clinic) {
+    return (
+      <div className="clinic-profile-page">
+        <main className="clinic-profile-main">
+          <p>Loading clinic...</p>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="clinic-profile-page">
       <aside className="clinic-profile-sidebar">
@@ -10,11 +48,22 @@ function ClinicProfile() {
         </Link>
 
         <nav className="clinic-profile-nav">
-          <Link to="/clinic/dashboard">Dashboard</Link>
-          <Link to="/clinic/patients">Patients</Link>
-          <Link to="/clinic/predictions">Predictions</Link>
+          <Link to="/clinic/dashboard">
+            Dashboard
+          </Link>
 
-          <Link to="/clinic/profile" className="active-link">
+          <Link to="/clinic/patients">
+            Patients
+          </Link>
+
+          <Link to="/clinic/predictions">
+            Predictions
+          </Link>
+
+          <Link
+            to="/clinic/profile"
+            className="active-link"
+          >
             Clinic Profile
           </Link>
         </nav>
@@ -27,9 +76,11 @@ function ClinicProfile() {
       <main className="clinic-profile-main">
         <div className="clinic-profile-header">
           <div>
-            <p className="clinic-profile-label">Clinic Profile</p>
+            <p className="clinic-profile-label">
+              Clinic Profile
+            </p>
 
-            <h1>Your clinic information.</h1>
+            <h1>{clinic.clinic_name}</h1>
 
             <p>
               Manage your clinic details, doctor information, and account
@@ -44,50 +95,81 @@ function ClinicProfile() {
 
         <section className="clinic-profile-card">
           <div className="clinic-profile-image">
-            LC
+            {clinic.clinic_name
+              ? clinic.clinic_name.charAt(0).toUpperCase()
+              : "C"}
           </div>
 
           <div className="clinic-profile-details">
             <div>
-              <p className="clinic-detail-label">Clinic Name</p>
-              <p>Lumina Clinic</p>
+              <p className="clinic-detail-label">
+                Clinic Name
+              </p>
+
+              <p>{clinic.clinic_name}</p>
             </div>
 
             <div>
-              <p className="clinic-detail-label">Doctor Name</p>
-              <p>Dr. Sample Doctor</p>
+              <p className="clinic-detail-label">
+                Doctor Name
+              </p>
+
+              <p>{clinic.doctor_name}</p>
             </div>
 
             <div>
-              <p className="clinic-detail-label">Email</p>
-              <p>clinic@email.com</p>
+              <p className="clinic-detail-label">
+                Email
+              </p>
+
+              <p>{clinic.email}</p>
             </div>
 
             <div>
-              <p className="clinic-detail-label">Phone</p>
-              <p>+962 7X XXX XXXX</p>
+              <p className="clinic-detail-label">
+                Phone
+              </p>
+
+              <p>
+                {clinic.phone || "Not provided"}
+              </p>
             </div>
 
             <div>
-              <p className="clinic-detail-label">Specialization</p>
-              <p>Facial Plastic Surgery</p>
+              <p className="clinic-detail-label">
+                Specialization
+              </p>
+
+              <p>
+                {clinic.specialization || "Not provided"}
+              </p>
             </div>
 
             <div>
-              <p className="clinic-detail-label">Location</p>
-              <p>Amman, Jordan</p>
+              <p className="clinic-detail-label">
+                Location
+              </p>
+
+              <p>
+                {clinic.address || "Not provided"}
+              </p>
             </div>
           </div>
         </section>
 
         <section className="clinic-profile-section">
           <div>
-            <p className="clinic-profile-label">Account</p>
+            <p className="clinic-profile-label">
+              Account
+            </p>
+
             <h2>Account settings</h2>
           </div>
 
           <div className="clinic-profile-actions">
-            <button>Change Password</button>
+            <button>
+              Change Password
+            </button>
 
             <button className="clinic-danger-button">
               Delete Account
@@ -97,16 +179,20 @@ function ClinicProfile() {
 
         <section className="clinic-profile-section">
           <div>
-            <p className="clinic-profile-label">Subscription</p>
+            <p className="clinic-profile-label">
+              Subscription
+            </p>
+
             <h2>Clinic plan</h2>
           </div>
 
           <div className="clinic-plan-card">
             <div>
               <h3>Professional Plan</h3>
+
               <p>
-                Access patient management, AI predictions, prediction history,
-                and clinic tools.
+                Access patient management, AI predictions,
+                prediction history, and clinic tools.
               </p>
             </div>
 

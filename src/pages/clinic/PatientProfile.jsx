@@ -1,7 +1,45 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import "./PatientProfile.css";
 
 function PatientProfile() {
+  const { id } = useParams();
+
+  const [patient, setPatient] = useState(null);
+
+  useEffect(() => {
+    getPatient();
+  }, [id]);
+
+  async function getPatient() {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/patients/${id}`
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setPatient(data);
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Could not connect to the server.");
+    }
+  }
+
+  if (!patient) {
+    return (
+      <div className="patient-profile-page">
+        <main className="patient-profile-main">
+          <p>Loading patient...</p>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="patient-profile-page">
       <aside className="patient-profile-sidebar">
@@ -10,20 +48,30 @@ function PatientProfile() {
         </Link>
 
         <nav className="patient-profile-nav">
-          <Link to="/clinic/dashboard">Dashboard</Link>
+          <Link to="/clinic/dashboard">
+            Dashboard
+          </Link>
 
-          <Link to="/clinic/patients" className="active-link">
+          <Link
+            to="/clinic/patients"
+            className="active-link"
+          >
             Patients
           </Link>
 
-          <Link to="/clinic/predictions">Predictions</Link>
+          <Link to="/clinic/predictions">
+            Predictions
+          </Link>
 
           <Link to="/clinic/profile">
             Clinic Profile
           </Link>
         </nav>
 
-        <Link to="/" className="patient-profile-logout">
+        <Link
+          to="/"
+          className="patient-profile-logout"
+        >
           Log Out
         </Link>
       </aside>
@@ -35,7 +83,7 @@ function PatientProfile() {
               Patient Profile
             </p>
 
-            <h1>Sample Patient</h1>
+            <h1>{patient.full_name}</h1>
 
             <p>
               Review patient information, consultation notes, and previous
@@ -53,38 +101,79 @@ function PatientProfile() {
 
         <section className="patient-info-card">
           <div className="patient-profile-avatar">
-            SA
+            {patient.full_name
+              ? patient.full_name.charAt(0).toUpperCase()
+              : "P"}
           </div>
 
           <div className="patient-profile-details">
             <div>
-              <p className="patient-detail-label">Email</p>
-              <p>patient@email.com</p>
+              <p className="patient-detail-label">
+                Email
+              </p>
+
+              <p>
+                {patient.email || "Not provided"}
+              </p>
             </div>
 
             <div>
-              <p className="patient-detail-label">Phone</p>
-              <p>+962 7X XXX XXXX</p>
+              <p className="patient-detail-label">
+                Phone
+              </p>
+
+              <p>
+                {patient.phone || "Not provided"}
+              </p>
             </div>
 
             <div>
-              <p className="patient-detail-label">Date of Birth</p>
-              <p>January 1, 2000</p>
+              <p className="patient-detail-label">
+                Date of Birth
+              </p>
+
+              <p>
+                {patient.date_of_birth
+                  ? new Date(
+                      patient.date_of_birth
+                    ).toLocaleDateString()
+                  : "Not provided"}
+              </p>
             </div>
 
             <div>
-              <p className="patient-detail-label">Gender</p>
-              <p>Female</p>
+              <p className="patient-detail-label">
+                Gender
+              </p>
+
+              <p>
+                {patient.gender || "Not provided"}
+              </p>
             </div>
 
             <div>
-              <p className="patient-detail-label">Procedure Interest</p>
-              <p>Rhinoplasty</p>
+              <p className="patient-detail-label">
+                Procedure Interest
+              </p>
+
+              <p>
+                {patient.procedure_interest ||
+                  "Not selected"}
+              </p>
             </div>
 
             <div>
-              <p className="patient-detail-label">Last Visit</p>
-              <p>September 8, 2026</p>
+              <p className="patient-detail-label">
+                Date Added
+              </p>
+
+              <p>
+                {patient.created_at
+                  ? new Date(
+                      patient.created_at
+                    ).toLocaleDateString()
+                  : "Unknown"}
+              </p>
             </div>
           </div>
         </section>
@@ -99,14 +188,15 @@ function PatientProfile() {
               <h2>Consultation notes</h2>
             </div>
 
-            <button>Edit Notes</button>
+            <button>
+              Edit Notes
+            </button>
           </div>
 
           <div className="patient-notes-box">
             <p>
-              Patient is interested in rhinoplasty and would like to
-              understand possible changes to the nose shape before making
-              a decision.
+              {patient.consultation_notes ||
+                "No consultation notes have been added yet."}
             </p>
           </div>
         </section>
@@ -130,31 +220,9 @@ function PatientProfile() {
           </div>
 
           <div className="patient-prediction-list">
-            <div className="patient-prediction-row">
-              <div className="patient-prediction-image">
-                Preview
-              </div>
-
-              <div>
-                <h3>Rhinoplasty</h3>
-                <p>September 8, 2026</p>
-              </div>
-
-              <button>View</button>
-            </div>
-
-            <div className="patient-prediction-row">
-              <div className="patient-prediction-image">
-                Preview
-              </div>
-
-              <div>
-                <h3>Rhinoplasty</h3>
-                <p>September 2, 2026</p>
-              </div>
-
-              <button>View</button>
-            </div>
+            <p>
+              No saved predictions yet.
+            </p>
           </div>
         </section>
 
