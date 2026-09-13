@@ -18,7 +18,7 @@ import PatientProfile from "./pages/clinic/PatientProfile";
 import ClinicPredictions from "./pages/clinic/ClinicPredictions";
 import NewPrediction from "./pages/clinic/NewPrediction";
 import ClinicProfile from "./pages/clinic/ClinicProfile";
-
+import PredictionDetails from "./pages/user/PredictionDetails";
 
 
 
@@ -61,6 +61,11 @@ function App() {
         path="/user/predictions"
         element={<PredictionHistory />}
       />
+      <Route
+        path="/user/predictions/:id"
+        element={<PredictionDetails />}
+      />
+
       <Route
         path="/clinic/signup"
         element={<ClinicSignup />}
