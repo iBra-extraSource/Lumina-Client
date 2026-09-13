@@ -105,7 +105,10 @@ function App() {
         path="/clinic/profile"
         element={<ClinicProfile />}
       />
-
+      <Route
+        path="/clinic/predictions/:id"
+        element={<PredictionDetails />}
+      />
     
       </Routes>
 

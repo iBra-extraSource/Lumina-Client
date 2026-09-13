@@ -16,9 +16,11 @@ function PatientProfile() {
   const [gender, setGender] = useState("");
   const [procedureInterest, setProcedureInterest] = useState("");
   const [consultationNotes, setConsultationNotes] = useState("");
+  const [predictions, setPredictions] = useState([]);
 
   useEffect(() => {
     getPatient();
+    getPredictions();
   }, [id]);
 
   async function getPatient() {
@@ -51,6 +53,22 @@ function PatientProfile() {
       alert("Could not connect to the server.");
     }
   }
+
+  async function getPredictions() {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/predictions?patient_id=${id}`
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setPredictions(data);
+    }
+  } catch (error) {
+    console.error("Failed to load patient predictions:", error);
+  }
+}
 
   async function handleSave() {
     try {
@@ -428,8 +446,33 @@ function PatientProfile() {
           </div>
 
           <div className="patient-prediction-list">
-            <p>No saved predictions yet.</p>
-          </div>
+  {predictions.length === 0 ? (
+    <p>No saved predictions yet.</p>
+  ) : (
+    predictions.map((prediction) => (
+      <div
+        key={prediction.id}
+        className="patient-prediction-item"
+      >
+        <div>
+          <strong>{prediction.procedure}</strong>
+
+          <p>
+            {new Date(
+              prediction.created_at
+            ).toLocaleDateString()}
+          </p>
+        </div>
+
+        <Link
+          to={`/clinic/predictions/${prediction.id}`}
+          className="patient-prediction-view">
+          View
+        </Link>
+      </div>
+    ))
+  )}
+</div>
         </section>
 
         <section className="patient-profile-note">

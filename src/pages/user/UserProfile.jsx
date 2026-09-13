@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./UserProfile.css";
 
 function UserProfile() {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getUser();
@@ -14,6 +15,7 @@ function UserProfile() {
       const userId = localStorage.getItem("userId");
 
       if (!userId) {
+        navigate("/");
         return;
       }
 
@@ -32,6 +34,12 @@ function UserProfile() {
       console.error(error);
       alert("Could not connect to the server.");
     }
+  }
+
+  function handleLogout() {
+    localStorage.removeItem("userId");
+    localStorage.removeItem("clinicId");
+    navigate("/");
   }
 
   if (!user) {
@@ -72,9 +80,12 @@ function UserProfile() {
           </Link>
         </nav>
 
-        <Link to="/" className="user-profile-logout">
+        <button
+          className="user-profile-logout"
+          onClick={handleLogout}
+        >
           Log Out
-        </Link>
+        </button>
       </aside>
 
       <main className="user-profile-main">

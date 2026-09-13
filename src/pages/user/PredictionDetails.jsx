@@ -1,12 +1,24 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useParams,
+} from "react-router-dom";
+
 import "./PredictionDetails.css";
 
 function PredictionDetails() {
   const { id } = useParams();
+  const location = useLocation();
 
   const [prediction, setPrediction] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const isClinic = location.pathname.startsWith("/clinic");
+
+  const backPath = isClinic
+    ? "/clinic/predictions"
+    : "/user/predictions";
 
   useEffect(() => {
     getPrediction();
@@ -58,7 +70,7 @@ function PredictionDetails() {
       <div className="prediction-details-container">
 
         <Link
-          to="/user/predictions"
+          to={backPath}
           className="prediction-details-back"
         >
           ← Back to Prediction History
@@ -69,7 +81,9 @@ function PredictionDetails() {
             AI Consultation Result
           </p>
 
-          <h1>{prediction.procedure}</h1>
+          <h1>
+            {prediction.procedure}
+          </h1>
 
           <p className="prediction-details-date">
             Generated on{" "}
@@ -88,7 +102,9 @@ function PredictionDetails() {
                   Visualization
                 </p>
 
-                <h2>Before & After Preview</h2>
+                <h2>
+                  Before & After Preview
+                </h2>
               </div>
 
               <span className="ai-badge">
